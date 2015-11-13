@@ -1,0 +1,185 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="jp">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle('｜おもりんく管理')->setAutoEscape(false) ?>
+
+        <?php
+        echo $this->headMeta()
+            ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+            ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+        ?>
+
+        <!-- Le styles -->
+        <?php
+        echo $this
+            ->headLink(array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => '#'))
+            ->prependStylesheet(array('rel' => 'icon', 'href' => $this->basePath() .'/img/login_favicon.ico'))
+            ->prependStylesheet($this->basePath() . '/css/style.css')
+            ->prependStylesheet($this->basePath() . '/css/style-layout.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap-theme.min.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.css')
+            ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+            ->prependStylesheet($this->basePath() . '/css/datepicker3.css')
+        ?>
+
+        <!-- Scripts -->
+        <?php
+        echo $this->headScript()
+            ->prependFile($this->basePath() . '/js/main.js')
+            ->prependFile($this->basePath() . '/js/paging.js')
+            ->prependFile($this->basePath() . '/js/bootstrap.js')
+            ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+            ->prependFile($this->basePath() . '/js/locales/bootstrap-datepicker.ja.js')
+            ->prependFile($this->basePath() . '/js/bootstrap-datepicker.js')
+            ->prependFile($this->basePath() . '/js/jquery.min.js')
+            ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+            ->prependFile($this->basePath() . '/js/html5shiv.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+        ;
+        ?>
+
+        <!--Custom scripts-->
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('.dropdown-toggle').dropdown();
+            });
+        </script>
+    </head>
+    
+    <body class="body-layout">
+        <div id="overlay" class="overlay">
+            <div class="overlay-loading"><img src="/img/ajax-loader.gif"/></div>
+        </div>
+        <!--Header content-->
+        <?php
+        $loginHelper = $this->LoginInfoHelper();
+        $userName = $loginHelper->getUserName();
+        $userId = $loginHelper->getUserId();
+ 	$userPermission = $loginHelper->getPermission();
+        $disMenuChannel = $loginHelper->getChannelMenu();
+        ?>
+        <div id="headerNav" class="container-fluid">
+            <div class="col-sm-2 nav-right">
+                <div class="text-right">
+                    <img src="<?= $this->basePath() . '/img/logo.png' ?>" style="height: 35px;"/>
+                </div>
+            </div>
+
+            <div class="col-sm-10 text-right col-sm-trim-pading-right">
+                <span class="btn-user">
+                    <span class="ic-user"><?php echo $userName;?></span></span>&nbsp;&nbsp;
+                <a href="<?= $this->url('home', array('action' => 'logout')) ?>" class="btn btn-default btn-header">
+                    <span class="ic-logout" >ログアウト</span></a>
+            </div>
+        </div>
+        
+        <div class="back-link back-link-top"><a href="javascript:void(0)" onclick="gotoPrevLink()">前の画面に戻る</a></div>
+        
+        <!--Main content-->
+        <div class="container-fluid">
+            <div class="container-left">
+                <?php 
+                    if ($userPermission == \Application\Application\Constant\CommonConstant::ROLE_CONTENT_OWNER):
+                ?>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">コンテンツ管理</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'listview')) ;?>">コンテンツ一覧</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'insert')) ;?>">コンテンツ登録</a></li>
+                </ul>                
+                <br/>
+                <br/>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">ユーザー管理</a></li>
+                    <li><a href="<?= $this->url('user', array('action' => 'update', 'id' => $userId)) ;?>">ユーザー更新</a></li>
+                </ul>
+                <?php endif; ?>
+                
+                <?php 
+                    if ($userPermission == \Application\Application\Constant\CommonConstant::ROLE_CHANNEL_OWNER):
+                ?>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">コンテンツ管理</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'listview')) ;?>">コンテンツ一覧</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'insert')) ;?>">コンテンツ登録</a></li>
+                </ul>
+                <br/>
+                <br/>
+                 <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">チャネル管理</a></li>
+                    <?php 
+                        if ($disMenuChannel['channel_id'] == 0):
+                    ?>
+                        <li id="channel-update-menu"><a href="<?= $this->url('channel', array('action' => 'insert')) ;?>">チャネル登録</a></li>
+                    <?php 
+                        elseif ($disMenuChannel['channel_id'] > 0):
+                    ?>
+                        <li id="channel-update-menu"><a href="<?= $this->url('channel', array('action' => 'update', 'id' => $disMenuChannel['channel_id'])) ;?>">チャネル更新</a></li>
+                    <?php endif; ?>    
+                </ul>
+                <br/>
+                <br/>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a href="#">ユーザー管理</a></li>
+                    <li><a href="<?= $this->url('user', array('action' => 'update', 'id' => $userId)) ;?>">ユーザー更新</a></li>
+                </ul>
+                <?php endif; ?>
+
+                <?php 
+                    if ($userPermission == \Application\Application\Constant\CommonConstant::ROLE_SYSTEM):
+                ?>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a>コンテンツ管理</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'listview')) ;?>">コンテンツ一覧</a></li>
+                    <li><a href="<?= $this->url('content', array('action' => 'insert')) ;?>">コンテンツ登録</a></li>
+                </ul>                
+                <br/>
+                <br/>
+                 <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a>チャネル管理</a></li>
+                    <li><a href="<?= $this->url('channel', array('action' => 'listview')) ;?>">チャネル一覧</a></li>
+                    <?php 
+                        if ($disMenuChannel['channel_id'] == 0):
+                    ?>
+                        <li id="channel-update-menu"><a href="<?= $this->url('channel', array('action' => 'insert')) ;?>">チャネル登録</a></li>
+                    <?php 
+                        elseif ($disMenuChannel['channel_id'] > 0):
+                    ?>                 
+                        <li id="channel-update-menu"><a href="<?= $this->url('channel', array('action' => 'update', 'id' => $disMenuChannel['channel_id'])) ;?>">チャネル更新</a></li>
+                    <?php endif; ?>  
+                </ul>
+                <br/>
+                <br/>
+                <ul class="nav nav-pills nav-stacked">
+                    <li class="active"><a>ユーザー管理</a></li>
+                    <li><a href="<?= $this->url('user', array('action' => 'listview')) ;?>">ユーザ一一覧</a></li>
+                    <li><a href="<?= $this->url('user', array('action' => 'update', 'id' => $userId)) ;?>">ユーザー更新</a></li>
+                </ul>
+                <?php endif; ?>
+                                
+
+<!--                <br/>
+                <br/>
+                <div class="btn btn-default btn-facebook">
+                    <span>Facebook連携</span>
+                </div>-->
+            </div>
+            <div class="container-right">
+                <?php
+                    echo $this->content;
+                ?>
+                
+                <br/>
+                <div class="back-link back-link-bottom"><a href="javascript:void(0)" onclick="gotoPrevLink()">前の画面に戻る</a></div>
+            </div>
+        </div>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <div>
+            <div class="text-right layout-footer">おもりんく管理 Version</div>
+        </div>
+    </body>
+</html>

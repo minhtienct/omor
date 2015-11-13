@@ -1,0 +1,199 @@
+<?php
+$this->headScript()->prependFile($this->basePath() . '/js/user.js');
+
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\User\Update');
+$this->headTitle($titleName);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('user', array('action' => 'update', 'id' => $this->userId)));
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+
+$loginHelper = $this->LoginInfoHelper();
+$userPermission = $loginHelper->getPermission();
+?>
+
+<!--Hiển thị tiêu đề của trang web-->
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?>
+    </h4>
+</div>
+
+<?php
+if (isset($this->successMessage)) :
+    ?>
+    <div class="alert alert-info" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->successMessage) ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($this->errorMessage)) : ?>
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->errorMessage) ?>
+    </div>
+<?php endif; ?>
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+
+<div id="registerComfirmPopup" class="overlay-content" style="width:250px;height:120px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">入力された情報を更新しますか？</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="showLoading();registerSubmit();">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('registerComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div>（<img src="/img/notered.png">）マークは必須項目です。</div>
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-hover table-title tblUser">
+                <?php 
+                    if ($this->userData['permission'] == \Application\Application\Constant\CommonConstant::ROLE_CONTENT_OWNER ||
+                        $this->userData['permission'] == \Application\Application\Constant\CommonConstant::ROLE_CHANNEL_OWNER ||
+                        $this->userData['permission'] == \Application\Application\Constant\CommonConstant::ROLE_SYSTEM):
+                ?>
+                <tr>
+                    <td class="require"><span>企業・団体名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('companyName')); ?>                            
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>企業・団体名（カナ）</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('companyNameKana')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>郵便番号(ハイフン不要）</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('postalCode')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>住所</span></td>
+                    <td>
+                        <div class="col-sm-12 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('address')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>電話番号</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('telNumber')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>担当者氏名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('staffName')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>担当者メールアドレス</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('staffMail')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WEBサイトURL</td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('webUrl')); ?>
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td class="require"><span>オーナー名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('ownerName')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                
+                <?php
+                    if ($this->userData['permission'] == \Application\Application\Constant\CommonConstant::ROLE_GENERAL_USER ||
+                        $this->userData['permission'] == \Application\Application\Constant\CommonConstant::ROLE_REGISTER_USER):
+                ?>
+                <tr>
+                    <td>ユーザー名</td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('userName')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>ユーザーID</td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('userID')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>メールアドレス</td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('mailAddress')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+
+                <?php 
+                    if ($userPermission == \Application\Application\Constant\CommonConstant::ROLE_SYSTEM):
+                ?>                
+                <tr>
+                    <td class="require"><span>権限</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('roles')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif; ?>
+                
+            </table>
+
+        </div>        
+    </div>
+</div>
+<?= $this->formRow($form->get('userId')); ?>
+<div class="form-group">
+    <div class="col-sm-12 text-center">
+        <div class="btn-wrapper">
+            <?= $this->formRow($form->get('btnRegister')
+                                     ->setAttribute('value', '更新')
+                                     ->setOptions(array('label' => '更新'))); ?>
+        </div>
+    </div>
+</div>
+
+<?= $this->form()->closeTag(); ?>
+

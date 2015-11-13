@@ -1,0 +1,184 @@
+<?php
+$this->headScript()->prependFile($this->basePath() . '/js/content.js');
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\Content\ListView');
+$this->headTitle($titleName);
+
+?>
+<div class="bs-callout bs-callout-info">
+    <h4 id="title-content" class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?></h4>
+</div>
+
+<div class="alert alert-info" role="alert" <?= isset($this->successMessage) ? '' : 'style="display:none"' ?>>
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span id="info-message"><?= isset($this->successMessage) ? $this->translate($this->successMessage) : '' ?></span>
+</div>
+<div class="alert alert-danger" role="alert" <?= isset($this->errorMessage) ? '' : 'style="display:none"' ?>>
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span id="error-message"><?= isset($this->errorMessage) ? $this->translate($this->errorMessage) : '' ?></span>
+</div>
+
+<div id="deleteComfirmPopup" class="overlay-content" style="width:350px;height:150px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">選択されたコンテンツを削除しますか？</div>
+    <div class="popup-buttons">
+        <a class="btn btn-contens-delete" id="delete-yes" href="javascript:void(0)">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('deleteComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="approvalCancelComfirmPopup" class="overlay-content" style="width:350px;height:150px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">承認取消しますか？</div>
+    <div class="popup-buttons">
+        <a class="btn btn-contens-delete" id="approval-cancel-yes" href="javascript:void(0)">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('approvalCancelComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="approvalComfirmPopup" class="overlay-content" style="width:350px;height:150px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">承認しますか？</div>
+    <div class="popup-buttons">
+        <a class="btn btn-contens-delete" id="approval-yes" href="javascript:void(0)">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('approvalComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="denialComfirmPopup" class="overlay-content" style="width:350px;height:150px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">拒否しますか？</div>
+    <div class="popup-buttons">
+        <a class="btn btn-contens-delete" id="denial-yes" href="javascript:void(0)">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('denialComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12" style="margin-top: 10px;">
+        <table id="listId" class="table table-striped table-bordered table-hover table-common">
+            <thead>
+                <?php if ($this->tabIndex == 1) : ?>
+                <tr>
+                    <th class="text-center">コンテンツ名</th>
+                    <th class="text-center">コンテンツ有効期間</th>
+                    <th class="text-center">チャネルへの登録申請状態</th>
+                    <th class="text-center">削除</th>
+                </tr>
+                <?php elseif ($this->tabIndex == 2) : ?>
+                <tr>
+                    <th class="text-center">コンテンツ名</th>
+                    <th class="text-center">有効期限</th>
+                    <th class="text-center">コンテンツオーナーID</th>
+                    <th class="text-center">コンテンツ毎のレポート</th>
+                    <th class="text-center">承認取消</th>
+                </tr>
+                <?php elseif ($this->tabIndex == 3) : ?>
+                <tr>
+                    <th class="text-center">コンテンツ名</th>
+                    <th class="text-center">有効期限</th>
+                    <th class="text-center">コンテンツオーナーID</th>
+                    <th class="text-center">承認</th>
+                    <th class="text-center">拒否</th>
+                </tr>
+                <?php elseif ($this->tabIndex == 4) : ?>
+                <tr>
+                    <th class="text-center" width="50%">コンテンツ名</th>
+                    <th class="text-center" width="50%">有効期限</th>
+                </tr>
+                <?php endif; ?>
+            </thead>
+            <tbody>
+                <?php
+                    foreach ($this->data as $row) :
+                        $strNameActivation = \Application\Application\Constant\CommonValue::getNameActivationStattus($row['activate_status']);
+                        $url = $this->url('content', array('action' => 'update', 'id' => $row['content_id']));
+
+                        $startDate = isset($row['available_term_start']) && $row['available_term_start'] != '' ? date('Y/m/d', $row['available_term_start']) : '';
+                        $endDate = isset($row['available_term_end']) && $row['available_term_end'] != '' ? date('Y/m/d', $row['available_term_end']) : '';
+                        $expireString = '';
+                        if ($startDate != '' || $endDate != '') {
+                            $expireString = $startDate . ' ～ ' . $endDate;
+                        }
+                        
+                        if ($this->tabIndex == 1) :
+                ?>
+                <tr>
+                    <td><a href="<?= $url ;?>"><?= $row['name']; ?></a></td>
+                    <td class="text-center"><?= $expireString; ?></td>
+                    <td class="text-center"><?= $strNameActivation ;?></td>
+                    <td class="text-center">
+                        <a class="btn btn-contens-delete" ctid="<?= $row['content_id'] ?>" href="javascript:void(0)" onclick="onDeleteContentClick(this);">削除</a>
+                    </td>
+                </tr>
+                    <?php elseif ($this->tabIndex == 2) : ?>
+                <tr>
+                    <td><a href="<?= $url ;?>"><?= $row['name']; ?></a></td>
+                    <td class="text-center"><?= $expireString; ?></td>
+                    <td class="text-center"><?= $row['create_user_id'] ?></td>
+                    <td class="text-center"><a href="/omolink/report/<?= $row['content_id'] ?>">レポート</a></td>
+                    <td class="text-center">
+                        <a class="btn btn-contens-delete" ctid="<?= $row['content_id'] ?>" chid="<?= $row['channel_id'] ?>" href="javascript:void(0)" onclick="onApprovalCancelContentClick(this);">承認取消</a>
+                    </td>
+                </tr>
+                    <?php elseif ($this->tabIndex == 3) : ?>
+                <tr>
+                    <td><a href="<?= $url ;?>"><?= $row['name']; ?></a></td>
+                    <td class="text-center"><?= $expireString; ?></td>
+                    <td class="text-center"><?= $row['create_user_id'] ?></td>
+                    <td class="text-center">
+                        <a class="btn btn-contens-delete" ctid="<?= $row['content_id'] ?>" chid="<?= $row['channel_id'] ?>" href="javascript:void(0)" onclick="onApprovalContentClick(this);">承認</a>
+                    </td>
+                    <td class="text-center">
+                        <a class="btn btn-contens-delete" ctid="<?= $row['content_id'] ?>" chid="<?= $row['channel_id'] ?>" href="javascript:void(0)" onclick="onDenialContentClick(this);">拒否</a>
+                    </td>
+                </tr>
+                    <?php elseif ($this->tabIndex == 4) : ?>
+                <tr>
+                    <td><a href="<?= $url ;?>"><?= $row['name']; ?></a></td>
+                    <td class="text-center"><?= $expireString; ?></td>
+                </tr>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="listId_paginator" class="row">
+    <?php echo $this->paginationControl($this->paginator,
+                                        'Sliding',
+                                        'paginator-slide', array(
+                                                'route' => 'content',
+                                                'action' => 'paging',
+                                                'tableId' => 'listId',
+                                                'order_by' => $this->order_by,
+                                                'order' => $this->order,
+                                                'addParamCallback' => 'paging',
+                                                ))
+    ;?>
+</div>
+
+<br/>
+<ul class="nav nav-tabs" id="UserFilterTabBar">
+    <li key="1" <?= ($this->tabIndex == 1) ? 'class="active"' : '' ?> id="tabs-contents01" style="width:25%"><a href="javascript:void(0)" onclick="userFilterTab(1)">自分で登録したコンテンツ一覧</a></li>
+    <?php if (!$this->isContentOwner): ?>
+    <li key="2" <?= ($this->tabIndex == 2) ? 'class="active"' : '' ?> id="tabs-contents02" style="width:30%"><a href="javascript:void(0)" onclick="userFilterTab(2)">チャネルに登録済みのコンテンツ一覧</a></li>
+    <li key="3" <?= ($this->tabIndex == 3) ? 'class="active"' : '' ?> id="tabs-contents03" style="width:27%"><a href="javascript:void(0)" onclick="userFilterTab(3)">チャネルに配信申請中のコンテンツ一覧</a></li>
+    <?php endif ?>
+    <li key="4" <?= ($this->tabIndex == 4) ? 'class="active"' : '' ?> id="tabs-contents04" style="width:18%"><a href="javascript:void(0)" onclick="userFilterTab(4)" style="margin-right: 0px;">全コンテンツ一覧</a></li>
+</ul>
+
+<script>
+    $(document).ready(function () {
+        lastPage = 1;
+        lastOrderBy = 'name';
+        lastOrder = 'ASC';
+    });
+
+    function paging(params) {
+        params.tab = $('#UserFilterTabBar > li[class=active]').attr('key');
+    }
+</script>

@@ -1,0 +1,178 @@
+<?php
+$this->headScript()->prependFile($this->basePath() . '/js/user.js');
+
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\User\Insert');
+$this->headTitle($titleName);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('user', array('action' => 'insert')));
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+?>
+
+<!--Hiển thị tiêu đề của trang web-->
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?></h4>
+</div>
+
+<?php if (isset($this->errorMessage)) : ?>
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->errorMessage) ?>
+    </div>
+<?php endif; ?>
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+
+<div id="registerComfirmPopup" class="overlay-content" style="width:250px;height:120px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">入力された情報を登録しますか？</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="showLoading();registerSubmit();">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('registerComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="registerResultPopup" class="overlay-content" style="width:400px;height:150px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">ログイン可能になりましたら運用担当者からご連絡いたします。しばらくお待ちください。</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="/">閉じる</a>
+    </div>
+</div>
+
+<div>
+    （<img src="/img/notered.png">）マークは必須項目です。<br/>
+    既にアプリおもりんくで認証頂いているメールアドレスは、<br/>
+    ご登録できませんので、認証済みアドレスを使用する際は、<br/>
+    管理者までご連絡ください。
+</div>
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-hover table-title tblUser">
+                <tr>
+                    <td class="require"><span>企業・団体名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('companyName')); ?>                            
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>企業・団体名（カナ）</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('companyNameKana')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>郵便番号(ハイフン不要）</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('postalCode')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>住所</span></td>
+                    <td>
+                        <div class="col-sm-12 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('address')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>電話番号</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('telNumber')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>担当者氏名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('staffName')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>担当者メールアドレス</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('staffMail')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>パスワード(8桁以上)</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('password')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>パスワード（確認用）</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('passwordRepeat')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WEBサイトURL</td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('webUrl')); ?>
+                        </div>
+                    </td>
+                </tr>                
+                <tr>
+                    <td class="require"><span>オーナー名</span></td>
+                    <td>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('ownerName')); ?>
+                        </div>
+                    </td>
+                </tr>   
+            </table>
+
+        </div>        
+    </div>
+</div>
+<div class="form-group">
+    <div class="col-sm-12">
+        <div class="col-sm-10 col-sm-offset-1">
+            <?= $this->formRow($form->get('privacyPolicy')->setValue(file_get_contents(realpath(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'privacy_policy.txt'))); ?>
+        </div>
+    </div>
+</div>
+<div class="form-group" >
+    <div class="col-sm-12 text-center row-listview-checkbox checkbox">        
+       <label class="bold_text"><?= $this->formInput($form->get('chkPrivacyPolicy')); ?>個人情報保護方針に同意する</label>
+       <?= $this->formElementErrors($form->get('chkPrivacyPolicy')) ?>
+    </div>
+</div>  
+
+<div class="form-group">
+    <div class="col-sm-12 text-center">
+        <div class="btn-wrapper">
+            <?= $this->formRow($form->get('btnRegister')); ?>
+        </div>
+    </div>
+</div>
+
+<?= $this->form()->closeTag(); ?>
+
+<script>
+    var insertSuccess = <?= $this->success ? 'true' : 'false'; ?>
+</script>

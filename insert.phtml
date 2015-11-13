@@ -1,0 +1,152 @@
+<?php
+    $appHelper = $this->ApplicationHelper();
+    $titleName = $appHelper->getHeadTitle('Omolink\Staff\Insert');
+    $this->headTitle($titleName);
+
+    $form = $this->form;
+    $form->setAttribute('action', $this->url('staff', array('action' => 'insert')));
+    $form->setAttribute('class', 'form-horizontal');
+    $form->prepare();
+?>
+
+<!--Hiển thị tiêu đề của trang web-->
+<div class="bs-callout bs-callout-info">
+    <h4><?php echo $this->escapeHtml($titleName); ?>
+    </h4>
+</div>
+</br>
+
+<p class="messages_form_error"><?php echo (isset($this->error_message)) ? $this->translate($this->error_message) : ''; ?></p>
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover">
+                <!--企業・団体名-->
+                <tr>
+                    <td class="td-vertical-align">企業・団体名</td>
+                    <td>
+                        <div class="col-sm-3 col-sm-trim-pading">
+                            <?php
+                                echo $this->formRow($form->get('COMPANY_NAME')->setAttribute('class', 'form-control'));
+                            ?>                            
+                        </div>
+                    </td>
+                </tr>
+                <!--企業・団体名（カナ）-->
+                <tr>
+                    <td>企業・団体名（カナ）</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('COMPANY_NAME_KANA')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--郵便番号-->
+                <tr>
+                    <td>郵便番号</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('POSTAL_CODE')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--住所-->
+                <tr>
+                    <td>住所</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('ADDRESS')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--電話番号-->
+                <tr>
+                    <td>電話番号</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('TEL_NUMBER')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--担当者氏名-->
+                <tr>
+                    <td>担当者氏名</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('STAFF_NAME')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--担当者メールアドレス-->
+                <tr>
+                    <td>担当者メールアドレス</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('STAFF_EMAIL')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--パスワード-->
+                <tr>
+                    <td>パスワード</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('PASSWORD')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>
+                <!--WEBサイトURL-->
+                <tr>
+                    <td>WEBサイトURL</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('WEB_URL')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>                
+                <!--オーナー名-->
+                <tr>
+                    <td>オーナー名</td>
+                    <td>
+                        <?php
+                            echo $this->formRow($form->get('OWNER_NAME')->setAttribute('class', 'form-control'));
+                        ?>
+                    </td>
+                </tr>   
+            </table>
+            
+            <!--個人情報保護方針-->
+            <div class="col-sm-8 input-group">
+                <?php
+                    echo $this->formRow($form->get('PRIVACY_POLICY'));
+                ?>
+            </div>
+
+            <!--個人情報保護方針に同意する-->
+            <div class="row" >
+                <div class="row-listview-checkbox">
+                    <?= $this->formRow($form->get('CHK_PRIVACY_POLICY'));?>
+                    <label>個人情報保護方針に同意する</label>
+                </div>
+            </div>            
+
+            <!--登録-->
+            <div class="row">
+                <div>
+                    <?php
+                        echo $this->formRow($form->get('btnRegister')->setAttribute('class', 'btn btn-lg btn-primary'));
+                    ?>
+                </div>
+            </div>        
+            
+        </div>        
+    </div>
+</div>
+<?= $this->form()->closeTag(); ?>
+

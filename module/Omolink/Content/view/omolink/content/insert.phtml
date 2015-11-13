@@ -1,0 +1,330 @@
+<?php
+$this->headScript()->appendFile('https://maps.googleapis.com/maps/api/js?key=AIzaSyBRgB9CWTXHF3YyNAlo40zw2XwdMsy1r64');
+$this->headScript()->prependFile($this->basePath() . '/js/content.js');
+?>
+<?php
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\Content\Insert');
+$this->headTitle($titleName);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('content', array('action' => 'insert')));
+$form->setAttribute('enctype','multipart/form-data');
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+?>
+
+<!--Hiển thị tiêu đề của trang web-->
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?>
+    </h4>
+</div>
+
+<?php if (isset($this->error_message)) : ?>
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->error_message) ?>
+    </div>
+<?php endif; ?>
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+
+<div id="registerComfirmPopup" class="overlay-content" style="width:250px;height:120px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">入力された情報を登録しますか？</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="showLoading();registerSubmit();">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('registerComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="mapPopup" class="overlay-content" style="top:50% !important;position:fixed !important;padding: 5px">
+    <div id="mapContainer" style="width:750px;height:500px">    
+    </div>
+    <div class="dialog-buttons text-center" style="padding-top:5px">
+        <a class="btn btn-sm btn-primary" style="width:80px" onclick="onOKMapClick()">確定</a> 
+        <a class="btn btn-sm btn-primary" style="width:80px" onclick="onCancelMapClick()">キャンセル</a> 
+    </div>
+</div>
+
+<div>（<img src="/img/notered.png">）マークは必須項目です。</div>
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-hover table-title tblContent">
+                <tr>
+                    <td class="require"><span>画像</span></td>
+                    <td style="border-right: 0px">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile1')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName1" name="txtFileName1">
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile1Click()">参照</a>                       
+                        </div>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                              <img src="/img/no_image.jpg" class="img-thumbnail" id="contentImage1">                  
+                        </div>
+                        <div class="col-sm-12"><?= $this->formElementErrors($form->get('imageContentFile1')); ?></div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder1')
+						->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile2')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName2" name="txtFileName2">
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile2Click()">参照</a>                       
+                        </div>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                              <img src="/img/no_image.jpg" class="img-thumbnail" id="contentImage2">                  
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder2')
+                        			->setAttribute('onchange', 'onChangeDisplayOrder(this)'))                        
+                        ; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile3')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName3" name="txtFileName3">
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile3Click()">参照</a>                       
+                        </div>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                              <img src="/img/no_image.jpg" class="img-thumbnail" id="contentImage3">                  
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder3')
+                                    		->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile4')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName4" name="txtFileName4">
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile4Click()">参照</a>                       
+                        </div>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                              <img src="/img/no_image.jpg" class="img-thumbnail" id="contentImage4">                  
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder4')
+                                                ->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile5')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName5" name="txtFileName5">
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile5Click()">参照</a>                       
+                        </div>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                              <img src="/img/no_image.jpg" class="img-thumbnail" id="contentImage5">                  
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder5')
+                                                ->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                    </td>
+                </tr>                
+                <tr>
+                    <td>コンテンツ有効期限</td>
+                    <td colspan="2">
+                            <div class="form-inline col-sm-12 col-sm-trim-pading">
+                                <div class="input-group">
+                                    <?= $this->formRow($form->get('startExpirationDate')); ?>
+                                </div>
+                                <span>～</span>
+                                <div class="input-group">
+                                    <?= $this->formRow($form->get('endExpirationDate')); ?>
+                                </div>   
+                            </div>
+                    </td>                    
+                </tr>
+                <tr>
+                <td class="require"><span>コンテンツ登録位置情報</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-1 col-sm-trim-pading content-label"><label>緯度</label></div>
+                        <div class="col-sm-4 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('registerLocationLatitude')); ?>
+                        </div>
+                        <div class="col-sm-7">
+                            <a class="btn btn-default btn-up-img" onclick="onShowMapClick()">地図を参照</a>
+                        </div>
+                        <div class="col-sm-12 col-sm-trim-pading content-top">
+                            <div class="col-sm-1 col-sm-trim-pading content-label" ><label>経度</label></div>
+                            <div class="col-sm-4 col-sm-trim-pading">
+                                <?= $this->formRow($form->get('registerLocationLongitude')); ?>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>コンテンツ名</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('contentName')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>ジャンルID</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('genreID')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>サブジャンル名</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('subGenreName')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>住所</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('address')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>電話</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('phone')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>有効時間</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('dateEffective')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>予算ID</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('countId')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>席数</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('numberSeat')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WEBサイト</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('website')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>概要</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('overview')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>備考</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('remark')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>著作権</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('copyright')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>申請するチャネル</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('channel')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php if (false) : ?>
+                <tr>
+                    <td>Facebookに連携</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formRow($form->get('rdFacebook')->setOptions(array('label_attributes' => array('class' => 'radio-inline')))); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif ?>
+            </table>
+
+        </div>        
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-12 text-center">
+        <div class="btn-wrapper">
+            <?= $this->formRow($form->get('btnUpdate')->setAttribute('class', 'btn btn-lg btn-primary btn-size')); ?>
+        </div>
+    </div>
+</div>
+
+<?= $this->form()->closeTag(); ?>
+
+<script>
+    var subGenreNameValue = '<?= $this->subGenreNameValue ?>';
+</script>

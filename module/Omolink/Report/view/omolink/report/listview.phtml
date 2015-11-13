@@ -1,0 +1,179 @@
+<?php
+$this->headScript()->prependFile($this->basePath() . '/js/report.js');
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\Report\ListView');
+$this->headTitle($titleName);
+
+$form = $this->form;
+$form->setAttribute('action', $this->url('report', array('action' => 'listview', 'id' => $this->contentId)));
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+?>
+
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+      google.load("visualization", "1", {packages:["corechart"]});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var options = {
+            //legend: {enabled: true, layout: 'vertical', align: 'right', verticalAlign: 'middle', width: 500},
+            sliceVisibilityThreshold: 0,
+            slices: {0: {color: '#FDB45C'} , 1: {color: '#46BFBD'}, 2: {color: '#F7464A'}},
+        };
+
+        //うぃるユーザーの性別内訳（円グラフ）
+        var userGenderData = <?= $this->reportData['willSexList'] ?>;
+        var dtUserGender = new google.visualization.DataTable();
+        dtUserGender.addColumn('string','Title');
+        dtUserGender.addColumn('number', 'Values');
+        dtUserGender.addRows(userGenderData);
+
+        var chartUserGender = new google.visualization.PieChart(document.getElementById('piechart'));
+        chartUserGender.draw(dtUserGender, options);
+        
+        //うぃるユーザーの年代内訳（円グラフ）
+        var userAgeData = <?= $this->reportData['willAgeList'] ?>;
+        var dtUserAge = new google.visualization.DataTable();
+        dtUserAge.addColumn('string','Title');
+        dtUserAge.addColumn('number', 'Values');
+        dtUserAge.addRows(userAgeData);
+            
+        var chartUserAge = new google.visualization.PieChart(document.getElementById('piechart2'));
+        chartUserAge.draw(dtUserAge, options);
+        
+        //思い出登録ユーザーの性別内訳（円グラフ）
+        var registerUserGenderData = <?= $this->reportData['omoSexList'] ?>;
+        var dtRegisterUserGender = new google.visualization.DataTable();
+        dtRegisterUserGender.addColumn('string','Title');
+        dtRegisterUserGender.addColumn('number', 'Values');
+        dtRegisterUserGender.addRows(registerUserGenderData);
+            
+        var chartRegisterUserGender = new google.visualization.PieChart(document.getElementById('piechart3'));
+        chartRegisterUserGender.draw(dtRegisterUserGender, options);
+        
+        //思い出登録ユーザーの年代内訳（円グラフ）
+        var registerUserAgeData = <?= $this->reportData['omoAgeList'] ?>;
+        var dtRegisterUserAge = new google.visualization.DataTable();
+        dtRegisterUserAge.addColumn('string','Title');
+        dtRegisterUserAge.addColumn('number', 'Values');
+        dtRegisterUserAge.addRows(registerUserAgeData);
+
+        var chartRegisterUserAge = new google.visualization.PieChart(document.getElementById('piechart4'));
+        chartRegisterUserAge.draw(dtRegisterUserAge, options);        
+      }
+    </script>
+
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?></h4>
+</div>
+    
+<?php if (isset($this->errorMessage)) : ?>
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->errorMessage) ?>
+    </div>
+<?php endif; ?>
+
+<div class="row">
+    <div class="col-sm-12" style="margin-top: 10px;">
+        <table class="table table-striped table-bordered table-hover table-title tblFormat">
+            <tbody>
+                <tr>
+                    <td>コンテンツ名</td>
+                    <td>
+                        <?= $this->reportData['contentName']; ?>                            
+                    </td>
+                </tr>
+                <tr>
+                    <td>コンテンツオーナー名</td>
+                    <td>
+                        <?= $this->reportData['ownerName'] ?>              
+                    </td>
+                </tr>
+                <tr>
+                    <td>うぃる数</td>
+                    <td>
+                        <?= $this->reportData['willCount'] ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>思い出登録数</td>
+                    <td>
+                        <?= $this->reportData['omoCount'] ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>評価平均点</td>
+                    <td>
+                        <?= $this->reportData['rateAverage'] ?>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-sm-6" style="margin-top: 10px;">
+        <table class="table table-striped table-bordered table-hover tblReport">
+            <tbody>
+                <tr>
+                    <td>うぃるユーザーの性別内訳</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="piechart" style="width: 400px; height: 300px;"></div>
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-sm-6" style="margin-top: 10px; padding-right: 10px;">
+        <table class="table table-striped table-bordered table-hover tblReport">
+            <tbody>
+                <tr>
+                    <td>うぃるユーザーの年代内訳</td>
+                </tr>
+                <tr>
+                    <td>
+                        <div id="piechart2" style="width: 400px; height: 300px;"></div>
+                    </td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-sm-6" style="margin-top: 10px;">
+        <table class="table table-striped table-bordered table-hover tblReport">
+            <tbody>
+                <tr>
+                    <td>思い出登録ユーザーの性別内訳</td>
+                </tr>
+                <tr>
+                    <td><div id="piechart3" style="width: 400px; height: 300px;"></div></td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-sm-6" style="margin-top: 10px;">
+        <table class="table table-striped table-bordered table-hover tblReport">
+            <tbody>
+                <tr>
+                    <td>思い出登録ユーザーの年代内訳</td>
+                </tr>
+                <tr>
+                    <td><div id="piechart4" style="width: 400px; height: 300px;"></div></td>
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+</div>
+<?= $this->formRow($form->get('contentId')); ?>
+<?= $this->form()->closeTag(); ?>
+
+

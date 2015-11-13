@@ -1,0 +1,98 @@
+<?php
+$this->headScript()->prependFile($this->basePath() . '/js/channel.js');
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\Channel\ListView');
+$this->headTitle($titleName);
+?>
+
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?></h4>
+</div>
+
+<div class="alert alert-info" role="alert" <?= isset($this->successMessage) ? '' : 'style="display:none"' ?>>
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span id="info-message"><?= isset($this->successMessage) ? $this->translate($this->successMessage) : '' ?></span>
+</div>
+<div class="alert alert-danger" role="alert" <?= isset($this->errorMessage) ? '' : 'style="display:none"' ?>>
+    <a href="#" class="close" data-dismiss="alert">&times;</a>
+    <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+    <span id="error-message"><?= isset($this->errorMessage) ? $this->translate($this->errorMessage) : '' ?></span>
+</div>
+
+<div id="deleteComfirmPopup" class="overlay-content" style="width:250px;height:120px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">選択されたチャネルを削除しますか？</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" id="delete-yes" href="javascript:void(0)" onclick="deleteChannel()">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('deleteComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="contentListPopup" class="overlay-content" style="width:450px;height:400px;top:50%">
+    <div class="popup-title">チャネルに登録済みのコンテンツ一覧</div>
+    <div class="popup-content" style="overflow-y: auto;height:290px">
+        <table id="contentList" class="table table-striped table-bordered table-hover table-common">
+            <thead>
+                <tr>
+                    <th class="text-center">コンテンツ名</th>
+                    <th class="text-center">コンテンツオーナーID</th>
+                </tr>
+            </thead>    
+            <tbody>
+                
+            </tbody>
+        </table>
+    </div>
+    <div id="contentList_paginator" class="row">
+    </div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('contentListPopup')">閉じる</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12" style="margin-top: 10px;">
+        <table id="listId" class="table table-striped table-bordered table-hover table-common">
+            <thead>
+                <tr>
+                    <th class="text-center">チャネル名</th>
+                    <th class="text-center">チャネル詳細</th>
+                    <th class="text-center">うぃる数</th>
+                    <th class="text-center">思い出総数</th>
+                    <th class="text-center">コンテンツ一覧</th>
+                    <th class="text-center">削除</th>
+                </tr>
+            </thead>    
+            <tbody>
+                <?php 
+                    foreach ($this->data as $row) :
+                ?>
+                <tr>
+                    <td class="text-left"><a href="<?= $this->url('channel', array('action' => 'update', 'id' => $row['channel_id'])) ;?>"><?= isset($row['name']) ? $row['name'] : null; ?></a></td>
+                    <td class="text-left"><?= isset($row['description']) ? $row['description'] : null; ?></td>
+                    <td class="text-center"><?= isset($row['will_count']) ? $row['will_count'] : '' ?></td>
+                    <td class="text-center"><?= isset($row['memory_count']) ? $row['memory_count'] : '' ?></td>
+                    <td class="text-center"><a href="javascript:void(0)" onclick="onShowContentList(<?= $row['channel_id'] ;?>)">コンテンツ一覧</a></td>
+                    <td class="text-center">
+                        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="onDeleteChannelClick('<?= $row['channel_id'] ;?>');">削除</a>
+                    </td>
+                </tr>
+                <?php endforeach; ?>                                                             
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="listId_paginator" class="row"> 
+    <?php echo $this->paginationControl($this->paginator,
+                                        'Sliding',
+                                        'paginator-slide', array(
+                                                'route' => 'channel',
+                                                'action' => 'paging',
+                                                'tableId' => 'listId',
+                                                'order_by' => $this->order_by,
+                                                'order' => $this->order,
+                                                ))
+    ;?>    
+</div>

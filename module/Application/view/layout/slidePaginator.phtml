@@ -1,0 +1,57 @@
+<?php if ($this->pageCount > 1): ?>
+    <div class="pagination col-sm-12 text-center">
+        <ul class="pagination">
+            <!-- First page link -->
+            <?php if ($this->current > 2): ?>
+                <li>
+                    <a href="javascript:void(0)" onclick="goToPage('<?php echo $this->tableId ?>', '<?php echo $this->url($this->route, array()) . '/' . $action ?>', 1, '<?php echo $order_by ?>', '<?php echo $order ?>', <?php echo $this->addParamCallback ? $this->addParamCallback : 'null' ?>, <?php echo $this->doneCallback ? $this->doneCallback : 'null' ?>)">
+                        <<<!--前へ-->
+                    </a>
+                </li>
+            <?php endif; ?>
+                
+            <!-- Previous page link -->
+            <?php if (isset($this->previous)): ?>
+                <li>
+                    <a href="javascript:void(0)" onclick="goToPage('<?php echo $this->tableId ?>', '<?php echo $this->url($this->route, array()) . '/' . $action ?>', <?php echo $this->previous ?>, '<?php echo $order_by ?>', '<?php echo $order ?>', <?php echo $this->addParamCallback ? $this->addParamCallback : 'null' ?>, <?php echo $this->doneCallback ? $this->doneCallback : 'null' ?>)">
+                        <<!--前へ-->
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Numbered page links -->
+            <?php foreach ($this->pagesInRange as $page): ?>
+                <?php if ($page != $this->current): ?>
+                    <li>
+                        <a href="javascript:void(0)" onclick="goToPage('<?php echo $this->tableId ?>', '<?php echo $this->url($this->route, array()) . '/' . $action ?>', <?php echo $page ?>, '<?php echo $order_by ?>', '<?php echo $order ?>', <?php echo $this->addParamCallback ? $this->addParamCallback : 'null' ?>, <?php echo $this->doneCallback ? $this->doneCallback : 'null' ?>)">
+                            <?php echo $page; ?>
+                        </a>
+                    </li>
+                <?php else: ?>
+                    <li class="active">
+                        <a href="#"><?php echo $page; ?></a>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <!-- Next page link -->
+            <?php if (isset($this->next)): ?>
+                <li>
+                    <a href="javascript:void(0)" onclick="goToPage('<?php echo $this->tableId ?>', '<?php echo $this->url($this->route, array()) . '/' . $action ?>', <?php echo $this->next ?>, '<?php echo $order_by ?>', '<?php echo $order ?>', <?php echo $this->addParamCallback ? $this->addParamCallback : 'null' ?>, <?php echo $this->doneCallback ? $this->doneCallback : 'null' ?>)">
+                      > <!--次へ-->
+                    </a>
+                </li>
+            <?php endif; ?>
+
+            <!-- Last page link -->
+            <?php if ($this->pageCount > $this->current + 1): ?>
+                <li>
+                    <a href="javascript:void(0)" onclick="goToPage('<?php echo $this->tableId ?>', '<?php echo $this->url($this->route, array()) . '/' . $action ?>', <?php echo $this->pageCount ?>, '<?php echo $order_by ?>', '<?php echo $order ?>', <?php echo $this->addParamCallback ? $this->addParamCallback : 'null' ?>, <?php echo $this->doneCallback ? $this->doneCallback : 'null' ?>)">
+                      >> <!--次へ-->
+                    </a>
+                </li>
+            <?php endif; ?>
+        </ul>
+    </div>
+<?php endif; ?>
+

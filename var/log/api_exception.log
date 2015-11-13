@@ -1,0 +1,6 @@
+2015-07-16T08:01:17+07:00 ERR (3): NSError {"NSLocalizedDescription":"Request failed: unacceptable content-type: text/html","localizedDescription":"Request failed: unacceptable content-type: text/html","code":"-1016"}
+2015-07-16T08:01:28+07:00 ERR (3): NSError {"NSLocalizedDescription":"Request failed: unacceptable content-type: text/html","localizedDescription":"Request failed: unacceptable content-type: text/html","code":"-1016"}
+2015-08-10T11:26:41+07:00 ERR (3): NSError {"localizedDescription":"Request failed: request too large (413)","NSLocalizedDescription":"Request failed: request too large (413)","code":"-1011"}
+2015-08-10T11:30:19+07:00 ERR (3): NSError {"localizedDescription":"Request failed: request too large (413)","NSLocalizedDescription":"Request failed: request too large (413)","code":"-1011"}
+2015-08-10T11:31:06+07:00 ERR (3): NSError {"localizedDescription":"Request failed: request too large (413)","NSLocalizedDescription":"Request failed: request too large (413)","code":"-1011"}
+2015-08-17T15:17:47+07:00 ERR (3): NSError {"localizedDescription":"Request failed: not found (404)","NSLocalizedDescription":"Request failed: not found (404)","code":"-1011"}

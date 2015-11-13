@@ -1,0 +1,61 @@
+<?php
+//:::: Head title
+$appHelper = $this->ApplicationHelper();
+$this->headTitle($appHelper->getHeadTitle('Application\Password\ChangeBrowse'));
+
+//:::: Form
+$form = $this->form;
+$form->setAttribute('action', $this->url(null, array('controller' => 'password', 'action' => 'changeBrowse')));
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+<h1>閲覧パスワード変更</h1>
+<?php if (isset($this->msgInfo)) : ?>
+    <div class="alert alert-info" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->msgInfo); ?>
+    </div>
+<?php endif; ?>
+
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="col-md-3 control-label">現在の閲覧パスワード<span class="required">*</span></label>
+                <div class="col-md-3">
+                    <?= $this->formRow($form->get('oldPassword')) ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">新パスワードの入力<span class="required">*</span></label>
+                <div class="col-md-3">
+                    <?= $this->formRow($form->get('newPassword')) ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">新パスワードの確認<span class="required">*</span></label>
+                <div class="col-md-3">
+                    <?= $this->formRow($form->get('confirmPassword')) ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-3 control-label">閲覧パスワード有効時間(分)<span class="required">*</span></label>
+                <div class="col-md-3">
+                    <?= $this->formRow($form->get('browseValidMinute')) ?>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-md-12">
+                    <div class="btn-wrapper">
+                        <?= $this->formSubmit($form->get('btnUpdate')) ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?= $this->form()->closeTag() ?>

@@ -1,0 +1,161 @@
+.body-layout {
+    padding-top: 0; 
+    background: url('../img/bg_header.png') repeat-x scroll left top rgba(0, 0, 0, 0);
+}
+
+#headerNav {
+    /*width: 100%;*/ 
+    height: 35px; 
+    /*padding: 0;*/
+}
+
+#headerNav span {
+    color: #fff;
+    font-size: 10px;
+}
+
+#headerNav #headerNavMiddle span {
+    //color: #888;
+    font-size: 13px;
+}
+
+#headerNav .dropdown-header-custom {
+    width: 100%;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+}
+
+#headerNav .dropdown-header-custom li {
+    padding: 0;
+    position: relative;
+    text-align: left;
+    white-space: nowrap;
+}
+
+#headerNav .dropdown-header-custom>li>a {
+    background-color: #222;
+    color: #fff;
+    display: block;
+    padding: 0 20px;
+    transition: background 0.1s linear 0s;
+    height: 46px;
+    line-height: 46px;
+    max-height: 46px;
+}
+
+#headerNav .dropdown-header-custom>li>a:hover {
+    background-color: #f49a1f;
+    background-image: none;
+}
+
+#headerNavLeft {
+    padding: 0;
+}
+
+#headerNavLeft.nav-left>a {
+    background: url("../img/btn-pulldown-app.png") no-repeat scroll 100% 50% / 24px 9px #000;
+    display: block;
+    line-height: 35px;
+    text-decoration: none;
+    border-right: 1px solid #333;
+}
+
+#headerNavLeft:hover.nav-left>a {
+    background-color: #222;
+}
+
+#headerNavMiddle {
+    height: 100%; 
+    //border-left-style: solid;
+    border-left-width: 1px;
+    padding-top: 8px;
+}
+
+#headerNavRight {
+    padding: 0;
+}
+
+#headerNavRight.nav-right>a {
+    background: url("../img/btn-pulldown.png") no-repeat scroll 10px 50% / 11px 7px #444;
+    display: block;
+    height: 35px;
+    line-height: 35px;
+    max-height: 35px;
+    padding: 0 20px 0 30px;
+    text-decoration: none;
+}
+
+#headerNavRight:hover.nav-right>a {
+    background-color: #222;
+}
+
+.dropdown-menu{
+    min-width: 100px;
+}
+
+#headerNavTitleLeft {
+    display: block;
+    line-height: 35px;
+    text-align: center;
+    border-right: 1px solid #333;
+}
+#headerNavTitleLeft >a{
+    text-decoration: none;
+}
+#headerNavTitleLeft:hover{
+    background-color: #222;
+}
+
+#headerNavTitleMiddle {
+    display: block;
+    line-height: 35px;
+    text-align: center;
+    padding: 0;
+}
+#headerNavTitleMiddle >a{
+    text-decoration: none;
+}
+#headerNavTitleMiddle:hover{
+    background-color: #222;
+}
+
+.container-left{
+    width: 20%; 
+    float: left; 
+    margin-top: 20px;
+}
+
+.container-right{
+    width: 80%;  
+    margin-top: 20px; 
+    padding-left: 30px; 
+    float: left;
+}
+
+.container-center{
+    width: 80%;  
+    margin: 20px auto 0;
+}
+
+.container-center-small {
+    width: 50%;  
+    margin: 0 auto 0;
+}
+
+.layout-footer{
+    background-color: #ddd; 
+    height: 40px; 
+    padding-top: 10px;
+}
+
+.btn-header{
+    height: 26px; 
+    padding-top: 1px; 
+    margin-top: 4px;
+}
+
+.btn-user{
+    background-color:#FE9E47 ;
+}

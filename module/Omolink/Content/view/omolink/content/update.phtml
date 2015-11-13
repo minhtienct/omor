@@ -1,0 +1,379 @@
+<?php
+$this->headScript()->appendFile('https://maps.googleapis.com/maps/api/js?key=AIzaSyBRgB9CWTXHF3YyNAlo40zw2XwdMsy1r64');
+$this->headScript()->prependFile($this->basePath() . '/js/content.js');
+$appHelper = $this->ApplicationHelper();
+$titleName = $appHelper->getHeadTitle('Omolink\Content\Update');
+$this->headTitle($titleName);
+
+$form = $this->form;
+$apiData = $this->apiData;
+$contentImage = $this->contentImage;
+$isSameUser = $this->isSameUser;
+$form->setAttribute('action', $this->url('content', array('action' => 'update', 'id' => $this->contentId)));
+$form->setAttribute('enctype','multipart/form-data');
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+?>
+
+<div class="bs-callout bs-callout-info">
+    <h4 class="title-text-bold"><?php echo $this->escapeHtml($titleName); ?>
+    </h4>
+</div>
+
+<?php
+if (isset($this->success)) :
+    ?>
+    <div class="alert alert-info" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->success) ?>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($this->error)) : ?>
+    <div class="alert alert-danger" role="alert">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <?= $this->translate($this->error) ?>
+    </div>
+<?php endif; ?>
+
+<?php
+echo $this->form()->openTag($form);
+echo $this->formRow($form->get('csrf'));
+?>
+
+<div id="registerComfirmPopup" class="overlay-content" style="width:250px;height:120px">
+    <div class="popup-title"><?php echo $this->escapeHtml($titleName); ?></div>
+    <div class="popup-content">入力された情報を更新しますか？</div>
+    <div class="popup-buttons">        
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="showLoading();registerSubmit();">はい</a>
+        <a class="btn btn-contens-delete" href="javascript:void(0)" onclick="hidePopup('registerComfirmPopup');">いいえ</a>
+    </div>
+</div>
+
+<div id="mapPopup" class="overlay-content" style="top:50% !important;position:fixed !important;padding: 5px">
+    <div id="mapContainer" style="width:750px;height:500px">    
+    </div>
+    <div class="dialog-buttons text-center" style="padding-top:5px">
+        <a class="btn btn-sm btn-primary" style="width:80px" onclick="onOKMapClick()">確定</a> 
+        <a class="btn btn-sm btn-primary" style="width:80px" onclick="onCancelMapClick()">キャンセル</a>
+    </div>
+</div>
+
+<?php if ($isSameUser) : ?>
+<div>（<img src="/img/notered.png">）マークは必須項目です。</div>
+<?php else : ?>
+<div>本コンテンツのオーナーではないため更新できません。</div>
+<?php endif ?>
+<div class="row" id="inputContainer">
+    <div class="form-horizontal">
+        <div class="col-sm-12">
+            <table class="table table-bordered table-hover table-title tblContent" style="margin-bottom:0px">
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile1')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName1" name="txtFileName1">
+                            <?= $this->formRow($form->get('fileId1')); ?>
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile1Click()">参照</a>                       
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                            <img src="<?= isset($contentImage[0]) ? $contentImage[0] : '/img/no_image.jpg' ?>" class="img-thumbnail" id="contentImage1" >
+                        </div>
+                        <div class="col-sm-12"><?= $this->formElementErrors($form->get('imageContentFile1')); ?></div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <?php if ($isSameUser) : ?>
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder1')
+						->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?> 
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile2')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName2" name="txtFileName2">
+                            <?= $this->formRow($form->get('fileId2')); ?>
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile2Click()">参照</a>                       
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                            <img src="<?= isset($contentImage[1]) ? $contentImage[1] : '/img/no_image.jpg' ?>" class="img-thumbnail" id="contentImage2" >
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <?php if ($isSameUser) : ?>
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder2')
+                        			->setAttribute('onchange', 'onChangeDisplayOrder(this)'))                        
+                        ; ?>
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile3')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName3" name="txtFileName3">
+                            <?= $this->formRow($form->get('fileId3')); ?>
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile3Click()">参照</a>                       
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                            <img src="<?= isset($contentImage[2]) ? $contentImage[2] : '/img/no_image.jpg' ?>" class="img-thumbnail" id="contentImage3" >
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <?php if ($isSameUser) : ?>
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder3')
+                                    		->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile4')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName4" name="txtFileName4">
+                            <?= $this->formRow($form->get('fileId4')); ?>
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile4Click()">参照</a>                       
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                            <img src="<?= isset($contentImage[3]) ? $contentImage[3] : '/img/no_image.jpg' ?>" class="img-thumbnail" id="contentImage4" >
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <?php if ($isSameUser) : ?>
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder4')
+                                                ->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                        <?php endif ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td>画像</td>
+                    <td style="border-right: 0px">
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $this->formFile($form->get('imageContentFile5')->setAttribute('style', 'display:none;')); ?>
+                            <input type="text" value="" class="form-control" id="txtFileName5" name="txtFileName5">
+                            <?= $this->formRow($form->get('fileId5')); ?>
+                        </div>
+                        <div class="col-sm-6">
+                               <a class="btn btn-default btn-up-img" onclick="onImageContentFile5Click()">参照</a>                       
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-6 col-sm-trim-pading content-top img-format">
+                            <img src="<?= isset($contentImage[4]) ? $contentImage[4] : '/img/no_image.jpg' ?>" class="img-thumbnail" id="contentImage5" >
+                        </div>
+                    </td>
+                    <td style="width:80px;vertical-align:middle;text-align:center;border-left: 0px;">
+                        <?php if ($isSameUser) : ?>
+                        <label style="background-color: #ffdbd2; width: 80px;"><span>表示順位</span></label>
+                        <?= $this->formRow($form->get('displayOrder5')
+                                                ->setAttribute('onchange', 'onChangeDisplayOrder(this)'))
+                        ; ?>
+                        <?php endif ?>
+                    </td>
+                </tr>
+            </table>
+            <table class="table table-bordered table-hover table-title tblContent" style="border-top: 0px">
+                <tr>
+                    <td style="border-top: 0px;">コンテンツ有効期限</td>
+                    <td colspan="2"  style="border-top: 0px">
+                            <div class="form-inline col-sm-12 col-sm-trim-pading">
+                                <div class="input-group">
+                                    <?= $isSameUser ? $this->formRow($form->get('startExpirationDate')) : $this->formRow($form->get('startExpirationDate')->setAttribute('readonly', 'readonly')); ?>
+                                </div>
+                                <span>～</span>
+                                <div class="input-group">
+                                    <?= $isSameUser ? $this->formRow($form->get('endExpirationDate')) : $this->formRow($form->get('endExpirationDate')->setAttribute('readonly', 'readonly')); ?>
+                                </div>   
+                            </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>コンテンツ登録位置情報</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-1 col-sm-trim-pading content-label"><label>緯度</label></div>
+                        <div class="col-sm-4 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('registerLocationLatitude')) : $this->formRow($form->get('registerLocationLatitude')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                        <?php if ($isSameUser) : ?>
+                        <div class="col-sm-7">
+                            <a class="btn btn-default btn-up-img" onclick="onShowMapClick()">地図を参照</a>
+                        </div>
+                        <?php endif ?>
+                        <div class="col-sm-12 col-sm-trim-pading content-top">
+                            <div class="col-sm-1 col-sm-trim-pading content-label" ><label>経度</label></div>
+                            <div class="col-sm-4 col-sm-trim-pading">
+                                <?= $isSameUser ? $this->formRow($form->get('registerLocationLongitude')) : $this->formRow($form->get('registerLocationLongitude')->setAttribute('readonly', 'readonly')); ?>
+                            </div>
+                        </div>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>コンテンツ名</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('contentName')) : $this->formRow($form->get('contentName')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>ジャンルID</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('genreID')) : $this->formRow($form->get('genreID')->setAttribute('disabled', 'disabled')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>サブジャンル名</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('subGenreName')) : $this->formRow($form->get('subGenreName')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>住所</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('address')) : $this->formRow($form->get('address')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>電話</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('phone')) : $this->formRow($form->get('phone')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>有効時間</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('dateEffective')) : $this->formRow($form->get('dateEffective')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>予算ID</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('countId')) : $this->formRow($form->get('countId')->setAttribute('disabled', 'disabled')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>席数</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('numberSeat')) : $this->formRow($form->get('numberSeat')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>WEBサイト</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('website')) : $this->formRow($form->get('website')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>概要</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('overview')) : $this->formRow($form->get('overview')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>備考</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('remark')) : $this->formRow($form->get('remark')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>著作権</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('copyright')) : $this->formRow($form->get('copyright')->setAttribute('readonly', 'readonly')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="require"><span>申請するチャネル</span></td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('channel')) : $this->formRow($form->get('channel')->setAttribute('disabled', 'disabled')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php if (false) : ?>
+                <tr>
+                    <td>Facebookに連携</td>
+                    <td colspan="2">
+                        <div class="col-sm-6 col-sm-trim-pading">
+                            <?= $isSameUser ? $this->formRow($form->get('rdFacebook')->setOptions(array('label_attributes' => array('class' => 'radio-inline')))) :
+                                $this->formRow($form->get('rdFacebook')->setOptions(array('label_attributes' => array('class' => 'radio-inline')))->setAttribute('disabled', 'disabled')); ?>
+                        </div>
+                    </td>
+                </tr>
+                <?php endif ?>
+            </table>
+
+        </div>        
+    </div>
+</div>
+<?php if ($isSameUser) : ?>
+<?= $this->formRow($form->get('contentId')); ?>
+<div class="form-group">
+    <div class="col-sm-12 text-center">
+        <div class="btn-wrapper">
+            <?= $this->formRow($form->get('btnUpdate')
+                    ->setAttribute('class', 'btn btn-lg btn-primary btn-size')
+                    ->setAttribute('value', '更新')
+                    ->setOptions(array('label' => '更新')));
+            ?>
+        </div>
+    </div>
+</div>
+<?php endif ?>
+<?= $this->form()->closeTag(); ?>
+
+<script>
+    var subGenreNameValue = '<?= $this->subGenreNameValue ?>';
+</script>
